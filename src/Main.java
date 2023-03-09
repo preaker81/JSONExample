@@ -61,26 +61,34 @@ public class Main {
     }
 
     static  void fetchJsonFromAPI() throws IOException, ParseException {
-//Spara URL till API
+
+        //Spara URL till API
         URL url = new URL("https://api.wheretheiss.at/v1/satellites/25544");
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        conn.connect(); // Utför connection
+        conn.setRequestMethod("GET"); //set request type
+        conn.connect(); // Utför requesten
         if (conn.getResponseCode() == 200) System.out.println("Connection successful");
         else System.out.println("Connection failed");
 
+        // Skapar ett stringBuilder objekt
         StringBuilder strData = new StringBuilder();
+        // Använder scanner för att läsa av url.openStream()
         Scanner scanner = new Scanner(url.openStream());
+        //loopar igenom response streamen tills det inte finns några fler rader
         while (scanner.hasNext()) {
+            // Appendar varje rad till objektet
             strData.append(scanner.nextLine());
         }
-        scanner.close();
+        scanner.close(); // Stänger scanner
 
+        // parse stData för att bygga upp en JSONParser som i sin tur castas till ett JSONObject
         JSONObject dataObject = (JSONObject) new JSONParser().parse(String.valueOf(strData));
 
-        String speed = (String) dataObject.get("velocity").toString();
+        // plockar ut den data vi vill ha från JSONObjektet genom .get på "key" och får ut value.
+        String speed = (String) dataObject.get("velocity").toString(); // value här är ett decimaltal, därav .toString
         String speedUnit = (String) dataObject.get("units");
+
         System.out.println("The speed is " + speed + " " + speedUnit + " an hour");
     }
 }
